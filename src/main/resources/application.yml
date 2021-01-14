@@ -1,0 +1,11 @@
+server:
+  port: 80
+spring:
+  application:
+    name: lock-service
+logging:
+  config: classpath:logback.xml
+lock:
+  server:
+    ip: 127.0.0.1
+    port: 9990
