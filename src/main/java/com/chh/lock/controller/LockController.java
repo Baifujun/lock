@@ -46,6 +46,25 @@ public class LockController {
         return lockService.erase();
     }
 
+    @GetMapping("/continueread")
+    public LockResponse continueRead() throws IOException {
+        return lockService.continueRead();
+    }
+
+    @GetMapping("/continuewrite")
+    public LockResponse continueWrite(String roomNo
+            , String checkinTime
+            , String checkoutTime
+            , String username
+            , int lock
+            , int doors
+            , int breakfast
+            , int isCopy
+            , String suitDoor
+            , String pubDoor) throws IOException {
+        return lockService.continueWrite(roomNo, checkinTime, checkoutTime, username, lock, doors, breakfast, isCopy, suitDoor, pubDoor);
+    }
+
     @GetMapping("/cardbox")
     public LockResponse cardBox() throws IOException {
         return lockService.cardBox();

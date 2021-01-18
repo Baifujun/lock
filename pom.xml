@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.chh</groupId>
     <artifactId>lock</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <name>lock</name>
     <description>门锁服务</description>
 
