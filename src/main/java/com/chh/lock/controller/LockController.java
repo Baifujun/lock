@@ -113,4 +113,24 @@ public class LockController {
         return lockService.recyclingBox();
     }
 
+    @GetMapping("/continueread/v1")
+    public JSONObject continueReadV1() throws IOException {
+        LockResponse lockResponse = lockService.continueRead();
+        if (lockResponse.getCode() == 0) {
+            ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), lockResponse.getCheckoutTime(), lockResponse.getCheckinTime());
+            return ResultTool.ResultMap(0, cardInfo, "读卡成功。");
+        }
+        return ResultTool.ResultMap(lockResponse.getCode(), null, "读卡失败！" + lockResponse.getMsg());
+    }
+
+    @GetMapping("/continuewrite/v1")
+    public JSONObject continueWriteV1(CardInfo cardInfo) throws IOException {
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyMMddHHmm");
+        LockResponse lockResponse = lockService.continueWrite(cardInfo.getRoomNo(), pattern.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
+        if (lockResponse.getCode() == 0) {
+            return ResultTool.ResultMap(0, cardInfo, "制卡成功。");
+        }
+        return ResultTool.ResultMap(lockResponse.getCode(), null, "制卡失败！" + lockResponse.getMsg());
+    }
+
 }
