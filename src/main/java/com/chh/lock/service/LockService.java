@@ -31,6 +31,9 @@ public class LockService {
     @Autowired
     private LockServerConfig lockServerConfig;
 
+    /**
+     * 读卡
+     */
     public LockResponse read() throws IOException {
         Socket socket = null;
         try {
@@ -139,6 +142,9 @@ public class LockService {
         }
     }
 
+    /**
+     * 制卡
+     */
     public LockResponse write(String roomNo
             , String checkinTime
             , String checkoutTime
@@ -256,7 +262,9 @@ public class LockService {
         }
     }
 
-
+    /**
+     * 销卡
+     */
     public LockResponse erase() throws IOException {
         Socket socket = null;
         try {
@@ -365,6 +373,9 @@ public class LockService {
         }
     }
 
+    /**
+     * 卡箱状态
+     */
     public LockResponse cardBox() throws IOException {
         Socket socket = null;
         try {
@@ -473,6 +484,9 @@ public class LockService {
         }
     }
 
+    /**
+     * 回收箱状态
+     */
     public LockResponse recyclingBox() throws IOException {
         Socket socket = null;
         try {
@@ -581,6 +595,9 @@ public class LockService {
         }
     }
 
+    /**
+     * 续住读卡
+     */
     public LockResponse continueRead() throws IOException {
         Socket socket = null;
         try {
@@ -689,6 +706,9 @@ public class LockService {
         }
     }
 
+    /**
+     * 续住制卡
+     */
     public LockResponse continueWrite(String roomNo
             , String checkinTime
             , String checkoutTime

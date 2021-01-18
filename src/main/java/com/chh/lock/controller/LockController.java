@@ -22,11 +22,17 @@ public class LockController {
     @Autowired
     LockService lockService;
 
+    /**
+     * 读卡
+     */
     @GetMapping("/read")
     public LockResponse read() throws IOException {
         return lockService.read();
     }
 
+    /**
+     * 制卡
+     */
     @GetMapping("/write")
     public LockResponse write(String roomNo
             , String checkinTime
@@ -41,16 +47,25 @@ public class LockController {
         return lockService.write(roomNo, checkinTime, checkoutTime, username, lock, doors, breakfast, isCopy, suitDoor, pubDoor);
     }
 
+    /**
+     * 销卡
+     */
     @GetMapping("/erase")
     public LockResponse erase() throws IOException {
         return lockService.erase();
     }
 
+    /**
+     * 续住读卡
+     */
     @GetMapping("/continueread")
     public LockResponse continueRead() throws IOException {
         return lockService.continueRead();
     }
 
+    /**
+     * 续住制卡
+     */
     @GetMapping("/continuewrite")
     public LockResponse continueWrite(String roomNo
             , String checkinTime
@@ -65,16 +80,25 @@ public class LockController {
         return lockService.continueWrite(roomNo, checkinTime, checkoutTime, username, lock, doors, breakfast, isCopy, suitDoor, pubDoor);
     }
 
+    /**
+     * 卡箱状态
+     */
     @GetMapping("/cardbox")
     public LockResponse cardBox() throws IOException {
         return lockService.cardBox();
     }
 
+    /**
+     * 回收箱状态
+     */
     @GetMapping("/recyclingbox")
     public LockResponse recyclingBox() throws IOException {
         return lockService.recyclingBox();
     }
 
+    /**
+     * 读卡（FOR 主程序）
+     */
     @GetMapping("/read/v1")
     public JSONObject readV1() throws IOException {
         LockResponse lockResponse = lockService.read();
@@ -85,6 +109,9 @@ public class LockController {
         return ResultTool.ResultMap(lockResponse.getCode(), null, "读卡失败！" + lockResponse.getMsg());
     }
 
+    /**
+     * 制卡（FOR 主程序）
+     */
     @GetMapping("/write/v1")
     public JSONObject writeV1(CardInfo cardInfo) throws IOException {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyMMddHHmm");
@@ -96,6 +123,35 @@ public class LockController {
 
     }
 
+    /**
+     * 续住读卡（FOR 主程序）
+     */
+    @GetMapping("/continueread/v1")
+    public JSONObject continueReadV1() throws IOException {
+        LockResponse lockResponse = lockService.continueRead();
+        if (lockResponse.getCode() == 0) {
+            ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), lockResponse.getCheckoutTime(), lockResponse.getCheckinTime());
+            return ResultTool.ResultMap(0, cardInfo, "读卡成功。");
+        }
+        return ResultTool.ResultMap(lockResponse.getCode(), null, "读卡失败！" + lockResponse.getMsg());
+    }
+
+    /**
+     * 续住制卡（FOR 主程序）
+     */
+    @GetMapping("/continuewrite/v1")
+    public JSONObject continueWriteV1(CardInfo cardInfo) throws IOException {
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyMMddHHmm");
+        LockResponse lockResponse = lockService.continueWrite(cardInfo.getRoomNo(), pattern.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
+        if (lockResponse.getCode() == 0) {
+            return ResultTool.ResultMap(0, cardInfo, "制卡成功。");
+        }
+        return ResultTool.ResultMap(lockResponse.getCode(), null, "制卡失败！" + lockResponse.getMsg());
+    }
+
+    /**
+     * 销卡（FOR 主程序）
+     */
     @GetMapping("/erase/v1")
     public JSONObject eraseV1() throws IOException {
         LockResponse lockResponse = lockService.erase();
@@ -105,6 +161,9 @@ public class LockController {
         return ResultTool.ResultMap(lockResponse.getCode(), null, "销卡失败！" + lockResponse.getMsg());
     }
 
+    /**
+     * 卡箱状态（FOR 主程序）
+     */
     @GetMapping("/cardbox/v1")
     public JSONObject cardBoxV1() throws IOException {
         LockResponse lockResponse = lockService.cardBox();
@@ -127,29 +186,12 @@ public class LockController {
         }
     }
 
+    /**
+     * 回收箱状态（FOR 主程序）
+     */
     @GetMapping("/recyclingbox/v1")
     public LockResponse recyclingBoxV1() throws IOException {
         return lockService.recyclingBox();
-    }
-
-    @GetMapping("/continueread/v1")
-    public JSONObject continueReadV1() throws IOException {
-        LockResponse lockResponse = lockService.continueRead();
-        if (lockResponse.getCode() == 0) {
-            ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), lockResponse.getCheckoutTime(), lockResponse.getCheckinTime());
-            return ResultTool.ResultMap(0, cardInfo, "读卡成功。");
-        }
-        return ResultTool.ResultMap(lockResponse.getCode(), null, "读卡失败！" + lockResponse.getMsg());
-    }
-
-    @GetMapping("/continuewrite/v1")
-    public JSONObject continueWriteV1(CardInfo cardInfo) throws IOException {
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyMMddHHmm");
-        LockResponse lockResponse = lockService.continueWrite(cardInfo.getRoomNo(), pattern.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
-        if (lockResponse.getCode() == 0) {
-            return ResultTool.ResultMap(0, cardInfo, "制卡成功。");
-        }
-        return ResultTool.ResultMap(lockResponse.getCode(), null, "制卡失败！" + lockResponse.getMsg());
     }
 
 }
