@@ -8,7 +8,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Random;
 
 @Slf4j
@@ -35,7 +35,7 @@ public class LockService {
      */
     public synchronized LockResponse read() throws Exception {
         log.info("==========开始执行读卡请求==========");
-        LockResponse lockResponse = establishTCPConnection(2, "", "", "", "", 0, 0, 0, 0, "", "");
+        LockResponse lockResponse = establishTCPConnection(0, "", "", "", "", 0, 0, 0, 0, "", "");
         log.info("==========执行读卡请求结束==========");
         return lockResponse;
     }
@@ -64,7 +64,7 @@ public class LockService {
      */
     public synchronized LockResponse erase() throws Exception {
         log.info("==========开始执行销卡请求==========");
-        LockResponse lockResponse = establishTCPConnection(0, "", "", "", "", 0, 0, 0, 0, "", "");
+        LockResponse lockResponse = establishTCPConnection(2, "", "", "", "", 0, 0, 0, 0, "", "");
         log.info("==========执行销卡请求结束==========");
         return lockResponse;
     }
@@ -181,8 +181,10 @@ public class LockService {
             outputStream.write(request);
             outputStream.flush();
             InputStream inputStream = socket.getInputStream();
-            byte[] responseBuffer = new byte[10240];
-            IOUtils.readFully(inputStream, responseBuffer);
+            byte[] tempBuffer = new byte[102400];
+            int length = inputStream.read(tempBuffer);
+            byte[] responseBuffer = Arrays.copyOf(tempBuffer, length);
+            //IOUtils.read(inputStream, responseBuffer);
             log.info("响应byte序列：\n" + Hex.encodeHexString(responseBuffer));
             ByteBuf byteBuf = Unpooled.wrappedBuffer(responseBuffer);
 
