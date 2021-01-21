@@ -17,6 +17,9 @@ import java.time.format.DateTimeFormatter;
 @RequestMapping("/lock")
 public class LockController {
 
+    private final DateTimeFormatter LOCK_FORMATTER = DateTimeFormatter.ofPattern("yyMMddHHmm");
+    private final DateTimeFormatter TRANSPORT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @Autowired
     LockService lockService;
 
@@ -99,8 +102,8 @@ public class LockController {
      */
     @RequestMapping("/checkin/v1")
     public JSONObject checkinV1(CardInfo cardInfo) throws Exception {
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyMMddHHmm");
-        LockResponse lockResponse = lockService.write(cardInfo.getRoomNo(), pattern.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
+        cardInfo.setCheckOutTime(LOCK_FORMATTER.format(TRANSPORT_FORMATTER.parse(cardInfo.getCheckOutTime())));
+        LockResponse lockResponse = lockService.write(cardInfo.getRoomNo(), LOCK_FORMATTER.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
         if (lockResponse.getCode() == 0) {
             return ResultTool.ResultMap(0, cardInfo, "制卡成功。");
         }
@@ -114,7 +117,7 @@ public class LockController {
     public JSONObject checkoutV1() throws Exception {
         LockResponse lockResponse = lockService.read();
         if (lockResponse.getCode() == 0) {
-            ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), lockResponse.getCheckoutTime(), lockResponse.getCheckinTime());
+            ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), TRANSPORT_FORMATTER.format(LOCK_FORMATTER.parse(lockResponse.getCheckoutTime())), TRANSPORT_FORMATTER.format(LOCK_FORMATTER.parse(lockResponse.getCheckinTime())));
             return ResultTool.ResultMap(0, cardInfo, "读卡成功。");
         }
         return ResultTool.ResultMap(lockResponse.getCode(), lockResponse.getMsg(), "读卡失败！" + lockResponse.getMsg());
@@ -139,7 +142,7 @@ public class LockController {
     public JSONObject continueCheckinV1() throws Exception {
         LockResponse lockResponse = lockService.continueRead();
         if (lockResponse.getCode() == 0) {
-            ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), lockResponse.getCheckoutTime(), lockResponse.getCheckinTime());
+            ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), TRANSPORT_FORMATTER.format(LOCK_FORMATTER.parse(lockResponse.getCheckoutTime())), TRANSPORT_FORMATTER.format(LOCK_FORMATTER.parse(lockResponse.getCheckinTime())));
             return ResultTool.ResultMap(0, cardInfo, "读卡成功。");
         }
         return ResultTool.ResultMap(lockResponse.getCode(), lockResponse.getMsg(), "读卡失败！" + lockResponse.getMsg());
@@ -150,8 +153,8 @@ public class LockController {
      */
     @RequestMapping("/continue/write/v1")
     public JSONObject continueWriteV1(CardInfo cardInfo) throws Exception {
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyMMddHHmm");
-        LockResponse lockResponse = lockService.continueWrite(cardInfo.getRoomNo(), pattern.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
+        cardInfo.setCheckOutTime(LOCK_FORMATTER.format(TRANSPORT_FORMATTER.parse(cardInfo.getCheckOutTime())));
+        LockResponse lockResponse = lockService.continueWrite(cardInfo.getRoomNo(), LOCK_FORMATTER.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
         if (lockResponse.getCode() == 0) {
             return ResultTool.ResultMap(0, cardInfo, "制卡成功。");
         }
