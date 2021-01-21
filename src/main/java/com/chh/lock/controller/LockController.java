@@ -96,10 +96,10 @@ public class LockController {
     }
 
     /**
-     * 读卡（FOR 主程序）
+     * 退房（FOR 主程序）
      */
-    @GetMapping("/read/v1")
-    public JSONObject readV1() throws Exception {
+    @GetMapping("/checkout/v1")
+    public JSONObject checkoutV1() throws Exception {
         LockResponse lockResponse = lockService.read();
         if (lockResponse.getCode() == 0) {
             ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), lockResponse.getCheckoutTime(), lockResponse.getCheckinTime());
@@ -109,17 +109,16 @@ public class LockController {
     }
 
     /**
-     * 制卡（FOR 主程序）
+     * 入住（FOR 主程序）
      */
-    @GetMapping("/write/v1")
-    public JSONObject writeV1(CardInfo cardInfo) throws Exception {
+    @GetMapping("/checkin/v1")
+    public JSONObject checkinV1(CardInfo cardInfo) throws Exception {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyMMddHHmm");
         LockResponse lockResponse = lockService.write(cardInfo.getRoomNo(), pattern.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
         if (lockResponse.getCode() == 0) {
             return ResultTool.ResultMap(0, cardInfo, "制卡成功。");
         }
         return ResultTool.ResultMap(lockResponse.getCode(), lockResponse.getMsg(), "制卡失败！" + lockResponse.getMsg());
-
     }
 
     /**
@@ -135,10 +134,10 @@ public class LockController {
     }
 
     /**
-     * 续住读卡（FOR 主程序）
+     * 续住进卡（FOR 主程序）
      */
-    @GetMapping("/continueread/v1")
-    public JSONObject continueReadV1() throws Exception {
+    @GetMapping("/continue/read/v1")
+    public JSONObject continueCheckinV1() throws Exception {
         LockResponse lockResponse = lockService.continueRead();
         if (lockResponse.getCode() == 0) {
             ReadCardInfo cardInfo = new ReadCardInfo(lockResponse.getRoomNO(), lockResponse.getCheckoutTime(), lockResponse.getCheckinTime());
@@ -148,9 +147,9 @@ public class LockController {
     }
 
     /**
-     * 续住制卡（FOR 主程序）
+     * 续住出卡（FOR 主程序）
      */
-    @GetMapping("/continuewrite/v1")
+    @GetMapping("/continue/write/v1")
     public JSONObject continueWriteV1(CardInfo cardInfo) throws Exception {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyMMddHHmm");
         LockResponse lockResponse = lockService.continueWrite(cardInfo.getRoomNo(), pattern.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
