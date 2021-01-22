@@ -102,8 +102,7 @@ public class LockController {
      */
     @RequestMapping("/checkin/v1")
     public JSONObject checkinV1(CardInfo cardInfo) throws Exception {
-        cardInfo.setCheckOutTime(LOCK_FORMATTER.format(TRANSPORT_FORMATTER.parse(cardInfo.getCheckOutTime())));
-        LockResponse lockResponse = lockService.write(cardInfo.getRoomNo(), LOCK_FORMATTER.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
+        LockResponse lockResponse = lockService.write(cardInfo.getRoomNo(), LOCK_FORMATTER.format(LocalDateTime.now()), LOCK_FORMATTER.format(TRANSPORT_FORMATTER.parse(cardInfo.getCheckOutTime())), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
         if (lockResponse.getCode() == 0) {
             return ResultTool.ResultMap(0, cardInfo, "制卡成功。");
         }
@@ -153,8 +152,7 @@ public class LockController {
      */
     @RequestMapping("/continue/write/v1")
     public JSONObject continueWriteV1(CardInfo cardInfo) throws Exception {
-        cardInfo.setCheckOutTime(LOCK_FORMATTER.format(TRANSPORT_FORMATTER.parse(cardInfo.getCheckOutTime())));
-        LockResponse lockResponse = lockService.continueWrite(cardInfo.getRoomNo(), LOCK_FORMATTER.format(LocalDateTime.now()), cardInfo.getCheckOutTime(), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
+        LockResponse lockResponse = lockService.continueWrite(cardInfo.getRoomNo(), LOCK_FORMATTER.format(LocalDateTime.now()), LOCK_FORMATTER.format(TRANSPORT_FORMATTER.parse(cardInfo.getCheckOutTime())), cardInfo.getUserName(), 1, 1, 1, 0, "01", "01");
         if (lockResponse.getCode() == 0) {
             return ResultTool.ResultMap(0, cardInfo, "制卡成功。");
         }
